@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Your Dezy Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#00838F;--teal-light:#E0F4F5;--teal-dark:#00474F;--teal-mid:#006770;--text:#111;--text-2:#555;--text-3:#888;--border:#E0E0E0;--bg:#F7F9F9;--white:#fff;--green:#1B873C;--green-light:#E6F5EC;--radius:12px;--radius-sm:8px}
+body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0}
+.page{width:100%;max-width:480px;min-height:100vh;background:var(--white);display:flex;flex-direction:column}
+.header{background:var(--teal-dark);padding:20px 24px 18px;display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo svg{width:22px;height:22px}
+.header-text p{font-size:13px;color:rgba(255,255,255,0.7);margin-top:1px}
+.header-text h1{font-size:16px;font-weight:600;color:white}
+.body{padding:24px;flex:1}
+.step{display:none}
+.step.active{display:block}
+.progress{display:flex;gap:6px;margin-bottom:24px}
+.pd{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background 0.3s}
+.pd.done{background:var(--teal)}
+.clinic-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-light);color:var(--teal-dark);font-size:12px;font-weight:500;padding:5px 10px;border-radius:20px;margin-bottom:14px}
+.clinic-badge svg{width:13px;height:13px}
+h2{font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3}
+.sub{font-size:14px;color:var(--text-2);line-height:1.6;margin-bottom:22px}
+.keywords{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.kw{border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 12px;cursor:pointer;transition:all 0.15s;background:var(--white);text-align:left;display:flex;flex-direction:column;gap:6px;-webkit-tap-highlight-color:transparent}
+.kw:active{transform:scale(0.97)}
+.kw.sel{border-color:var(--teal);background:var(--teal-light)}
+.kw-icon{width:32px;height:32px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.kw.sel .kw-icon{background:white}
+.kw-icon svg{width:18px;height:18px;stroke:var(--teal-dark);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kw-name{font-size:13px;font-weight:600;color:var(--text)}
+.kw.sel .kw-name{color:var(--teal-dark)}
+.kw-desc{font-size:11px;color:var(--text-3);line-height:1.4}
+.hint{font-size:13px;color:var(--text-3);margin-bottom:20px;min-height:18px}
+.hint.warn{color:#c0392b}
+.btn{width:100%;padding:15px;border-radius:var(--radius);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--teal);color:white}
+.btn-primary:hover{background:var(--teal-mid)}
+.btn-primary:disabled{background:#ccc;cursor:not-allowed;transform:none}
+.btn-secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border);margin-top:10px}
+.btn-secondary:hover{background:var(--bg)}
+.btn-ghost{background:none;color:var(--teal);border:none;font-size:13px;padding:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;display:block;margin:8px auto 0}
+.review-card{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;position:relative}
+.review-text{font-size:15px;line-height:1.7;color:var(--text);min-height:70px}
+.loading{display:flex;align-items:center;gap:8px;color:var(--text-3);font-size:14px}
+.dots{display:flex;gap:4px}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 1.2s infinite}
+.dots span:nth-child(2){animation-delay:0.2s}
+.dots span:nth-child(3){animation-delay:0.4s}
+@keyframes pulse{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+.review-actions{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.regen-btn{background:none;border:none;color:var(--teal);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;font-family:'Inter',sans-serif}
+.copied-badge{background:var(--green-light);color:var(--green);font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;display:none}
+.copied-badge.show{display:inline-flex;align-items:center;gap:4px}
+.divider{border:none;border-top:1px solid var(--border);margin:22px 0}
+.gmb-card{border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.gmb-icon{width:44px;height:44px;border-radius:10px;background:#E8F0FE;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gmb-info{flex:1}
+.gmb-info p{font-size:14px;font-weight:600;color:var(--text)}
+.gmb-info span{font-size:12px;color:var(--text-3)}
+.steps-list{list-style:none;margin-bottom:22px}
+.steps-list li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text-2);line-height:1.5}
+.steps-list li:last-child{border-bottom:none}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--teal-light);color:var(--teal-dark);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.success-wrap{text-align:center;padding:32px 0}
+.success-icon{width:72px;height:72px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.success-icon svg{width:36px;height:36px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.stars{font-size:28px;margin-bottom:16px;letter-spacing:4px}
+.footer{padding:16px 24px;text-align:center;border-top:1px solid var(--border)}
+.footer p{font-size:11px;color:var(--text-3)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00474F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 5 5 5 9c0 2.5 1 4.5 2.5 6L12 22l4.5-7C18 13.5 19 11.5 19 9c0-4-3-7-7-7z"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>Dezy Dental</h1>
+      <p id="header-clinic">Bangalore</p>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <div class="step active" id="s1">
+      <div class="progress"><div class="pd done"></div><div class="pd"></div><div class="pd"></div></div>
+      <div class="clinic-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span id="badge-clinic">Dezy Dental</span>
+      </div>
+      <h2>What made your visit special?</h2>
+      <p class="sub">Pick 2 or 3 things that describe your experience. We'll write the review for you in seconds.</p>
+      <div class="keywords">
+        <button class="kw" data-kw="dental implant treatment" onclick="toggle(this)">
+          <div class="kw-icon"><svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M8 14h8l1 8H7l1-8z"/></svg></div>
+          <div class="kw-name">Implants</div>
+          <div class="kw-desc">World-class implant care</div>
+        </button>
+        <button class="kw" data-kw="clear aligner treatment" onclick="toggle(this)">
+          <div class="kw-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10"/><circle cx="18" cy="14" r="3"/></svg></div>
+          <div class="kw-name">Aligners</div>
+          <div class="kw-desc">Invisible teeth straightening</div>
+        </button>
+        <button class="kw" data-kw="friendly and caring doctors" onclick="toggle(this)">
+          <div class="kw-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <div class="kw-name">Friendly doctors</div>
+          <div class="kw-desc">Warm, caring team</div>
+        </button>
+        <button class="kw" data-kw="advanced dental technology and modern equipment" onclick="toggle(this)">
+          <div class="kw-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+          <div class="kw-name">Advanced technology</div>
+          <div class="kw-desc">Modern equipment</div>
+        </button>
+        <button class="kw" data-kw="affordable pricing and transparent costs" onclick="toggle(this)">
+          <div class="kw-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="kw-name">Affordable pricing</div>
+          <div class="kw-desc">Fair and transparent</div>
+        </button>
+        <button class="kw" data-kw="quick appointments and minimal waiting time" onclick="toggle(this)">
+          <div class="kw-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div class="kw-name">Quick appointments</div>
+          <div class="kw-desc">No long waits</div>
+        </button>
+      </div>
+      <p class="hint" id="hint">Select 2 or 3 things you loved</p>
+      <button class="btn btn-primary" id="genbtn" onclick="generate()" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Write my review
+      </button>
+    </div>
+
+    <div class="step" id="s2">
+      <div class="progress"><div class="pd done"></div><div class="pd done"></div><div class="pd"></div></div>
+      <h2>Your review is ready</h2>
+      <p class="sub">Read through and copy it — then we'll take you to Google to paste it.</p>
+      <div class="review-card">
+        <div class="review-text" id="review-out"><div class="loading"><div class="dots"><span></span><span></span><span></span></div>Writing your review...</div></div>
+        <div class="review-actions">
+          <button class="regen-btn" onclick="regen()" id="regen-btn" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Try a different version
+          </button>
+          <span class="copied-badge" id="copied-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied!</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="copybtn" onclick="copyR()" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy review
+      </button>
+      <button class="btn btn-secondary" onclick="goBack()">Edit my choices</button>
+    </div>
+
+    <div class="step" id="s3">
+      <div class="progress"><div class="pd done"></div><div class="pd done"></div><div class="pd done"></div></div>
+      <h2>Now paste it on Google</h2>
+      <p class="sub">Your review is copied. Follow these steps to post it:</p>
+      <ul class="steps-list">
+        <li><div class="step-num">1</div><span>Tap the button below to open our Google page</span></li>
+        <li><div class="step-num">2</div><span>Tap <strong>Write a review</strong></span></li>
+        <li><div class="step-num">3</div><span>Long-press in the text box → tap <strong>Paste</strong></span></li>
+        <li><div class="step-num">4</div><span>Give us 5 stars and tap <strong>Post</strong> ⭐</span></li>
+      </ul>
+      <div class="gmb-card">
+        <div class="gmb-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        </div>
+        <div class="gmb-info"><p id="gmb-name">Dezy Dental Clinic</p><span>Opens Google Maps</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="openGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+        Open Google Reviews
+      </button>
+      <button class="btn-ghost" onclick="done()">I've already posted my review</button>
+    </div>
+
+    <div class="step" id="s4">
+      <div class="success-wrap">
+        <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <h2 style="margin-bottom:10px">Thank you!</h2>
+        <p class="sub" style="margin-bottom:0">Your review helps other patients find us and make the right choice for their smile. We truly appreciate you taking the time.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer"><p>Dezy Dental · <a href="https://dezy.com" style="color:var(--teal);text-decoration:none">dezy.com</a></p></div>
+</div>
+
+<script>
+const CLINICS={"rajajinagar":{name:"Dezy Dental Clinic in Rajajinagar",city:"Bangalore",placeId:"ChIJsZFGGlA9rjsRWYPAnYKO_mQ"},"infantry-road":{name:"Dezy Dental Clinic in Infantry Road",city:"Bangalore",placeId:"ChIJD-O1ABYXrjsRfmYSvNxr8D4"},"indiranagar":{name:"Dezy Dental Clinic in Indiranagar",city:"Bangalore",placeId:"ChIJg289d-4XrjsRYNcFJbu0YgY"},"jp-nagar":{name:"Dezy Dental Clinic in JP Nagar",city:"Bangalore",placeId:"ChIJg3jyQ2sVrjsRIZArDaqJLf8"},"basavanagudi":{name:"Dezy Dental Clinic in Basavanagudi",city:"Bangalore",placeId:"ChIJy01DuL0VrjsR23DmZEJLAac"},"electronic-city":{name:"Dezy Dental Clinic in Electronic City",city:"Bangalore",placeId:"ChIJj45cAC4VrjsR4emTZ3g5_dI"},"bannerghatta":{name:"Dezy Dental Clinic in Bannerghatta Road",city:"Bangalore",placeId:"ChIJnXP-oyQVrjsRNH-k20MaFX0"},"rr-nagar":{name:"Dezy Dental Clinic in RR Nagar",city:"Bangalore",placeId:"ChIJmcDyWpI_rjsRZcpAqJGyUrc"},"hsr-layout":{name:"Dezy Dental Clinic in HSR Layout",city:"Bangalore",placeId:"ChIJ44QTVyUVrjsRuKv2hYGu88E"},"marathahalli":{name:"Dezy Dental Clinic in Marathahalli",city:"Bangalore",placeId:"ChIJQfdBb_wTrjsRPcpNUi3xhU8"},"koramangala":{name:"Dezy Dental Clinic in Koramangala",city:"Bangalore",placeId:"ChIJD-1t3_0VrjsRITaxuehTi1Y"},"kasturi-nagar":{name:"Dezy Dental Clinic in Kasturi Nagar",city:"Bangalore",placeId:"ChIJtwToWzMRrjsRK_rPxipsaM8"},"kalyan-nagar":{name:"Dezy Dental Clinic in Kalyan Nagar",city:"Bangalore",placeId:"ChIJ8aJMi2QXrjsR-HdUhlF0xiM"},"hebbal":{name:"Dezy Dental Clinic in Hebbal",city:"Bangalore",placeId:"ChIJATLJq98XrjsRExSAOLb6LVI"},"bellandur":{name:"Dezy Dental Clinic in Bellandur",city:"Bangalore",placeId:"ChIJi7s9jZ8TrjsReSdz462ea0g"},"nagarbhavi":{name:"Dezy Dental Clinic in Nagarbhavi",city:"Bangalore",placeId:"ChIJ0XLO31c9rjsRAOF41CiTMxA"},"vidyaranyapura":{name:"Dezy Dental Clinic in Vidyaranyapura",city:"Bangalore",placeId:"ChIJ09S_bBUjrjsRywmfp2_SWcY"},"jakkur":{name:"Dezy Dental Clinic in Jakkur",city:"Bangalore",placeId:"ChIJG1bbepoZrjsRI6jZ_AyM-9g"},"lb-nagar":{name:"Dezy Dental Clinic in LB Nagar",city:"Hyderabad",placeId:"ChIJT_Gbrh6ZyzsRClzzbMgXItQ"},"somajiguda":{name:"Dezy Dental Clinic in Somajiguda",city:"Hyderabad",placeId:"ChIJQcK_DBCRyzsRhgqGVvrIMLI"},"baner":{name:"Dezy Dental Clinic in Baner",city:"Pune",placeId:"ChIJkw0Lhzy5wjsRXGptdsAP8rA"},"viman-nagar":{name:"Dezy Dental Clinic in Viman Nagar",city:"Pune",placeId:"ChIJ-atqcbzBwjsRGPMHcO_OeNs"},"sapna-sangeeta":{name:"Dezy Dental Clinic in Sapna Sangeeta",city:"Indore",placeId:"ChIJW7cobOv9YjkRdiROQexmWHY"},"vijay-nagar":{name:"Dezy Dental Clinic in Vijay Nagar",city:"Indore",placeId:"ChIJ6XIMRJAdYzkRiM6V6V7QN_I"}};
+
+const p=new URLSearchParams(window.location.search);
+const clinic=CLINICS[p.get("clinic")]||CLINICS["indiranagar"];
+document.getElementById("header-clinic").textContent=clinic.city;
+document.getElementById("badge-clinic").textContent=clinic.name;
+document.getElementById("gmb-name").textContent=clinic.name;
+
+let selected=[],reviewText="",generating=false;
+
+function toggle(el){
+  if(generating)return;
+  const kw=el.dataset.kw;
+  if(el.classList.contains("sel")){el.classList.remove("sel");selected=selected.filter(k=>k!==kw);}
+  else{
+    if(selected.length>=3){document.getElementById("hint").textContent="Max 3 — deselect one to change";document.getElementById("hint").classList.add("warn");return;}
+    el.classList.add("sel");selected.push(kw);
+  }
+  document.getElementById("hint").classList.remove("warn");
+  const n=selected.length;
+  document.getElementById("hint").textContent=n===0?"Select 2 or 3 things you loved":n===1?"Pick 1 or 2 more":n+" selected — ready to go";
+  document.getElementById("genbtn").disabled=n<2;
+}
+
+function showStep(id){document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);}
+
+async function callClaude(prompt){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+  const d=await r.json();return d.content[0].text.trim();
+}
+
+function fallback(){
+  const m={"dental implant treatment":"implant treatment","clear aligner treatment":"aligner treatment","friendly and caring doctors":"friendly and caring doctors","advanced dental technology and modern equipment":"advanced technology","affordable pricing and transparent costs":"affordable pricing","quick appointments and minimal waiting time":"quick appointments"};
+  const kws=selected.map(k=>m[k]||k);const last=kws.pop();
+  return`I visited ${clinic.name} recently and had a great experience. The ${kws.length?kws.join(", ")+" and "+last:last} really stood out. I would highly recommend Dezy to anyone looking for quality dental care in ${clinic.city}.`;
+}
+
+async function generate(){
+  generating=true;showStep("s2");
+  document.getElementById("regen-btn").style.display="none";
+  document.getElementById("copybtn").disabled=true;
+  document.getElementById("review-out").innerHTML='<div class="loading"><div class="dots"><span></span><span></span><span></span></div>Writing your review...</div>';
+  const prompt=`Write a genuine warm Google review for ${clinic.name} in ${clinic.city}, India. Patient highlights: ${selected.join(", ")}. Requirements: first person, 2-3 sentences, natural conversational English, sounds like a real patient, mentions clinic name naturally, no hashtags no emojis. Return ONLY the review text.`;
+  try{reviewText=await callClaude(prompt);}catch(e){reviewText=fallback();}
+  document.getElementById("review-out").textContent=reviewText;
+  document.getElementById("regen-btn").style.display="flex";
+  document.getElementById("copybtn").disabled=false;
+  generating=false;
+}
+
+async function regen(){
+  if(generating)return;generating=true;
+  document.getElementById("regen-btn").style.display="none";
+  document.getElementById("copybtn").disabled=true;
+  document.getElementById("copied-badge").classList.remove("show");
+  document.getElementById("review-out").innerHTML='<div class="loading"><div class="dots"><span></span><span></span><span></span></div>Writing a new version...</div>';
+  const prompt=`Write a DIFFERENT genuine Google review for ${clinic.name} in ${clinic.city}. Highlight: ${selected.join(", ")}. Different wording and structure. First person, 2-3 sentences, no hashtags no emojis. Return ONLY the review text.`;
+  try{reviewText=await callClaude(prompt);}catch(e){reviewText=fallback();}
+  document.getElementById("review-out").textContent=reviewText;
+  document.getElementById("regen-btn").style.display="flex";
+  document.getElementById("copybtn").disabled=false;
+  generating=false;
+}
+
+function copyR(){
+  navigator.clipboard.writeText(reviewText).then(()=>{
+    document.getElementById("copied-badge").classList.add("show");
+    document.getElementById("copybtn").innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    setTimeout(()=>showStep("s3"),800);
+  });
+}
+
+function openGoogle(){window.open("https://search.google.com/local/writereview?placeid="+clinic.placeId,"_blank");}
+function done(){showStep("s4");}
+function goBack(){showStep("s1");}
+</script>
+</body>
+</html>
